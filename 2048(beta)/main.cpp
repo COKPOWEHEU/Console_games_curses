@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 
+//gcc почему-то не знает что такое or. Возможно, потому что все используют ||
+#ifndef or 
+  #define or ||
+#endif
+
 int field[4][4]={0},key,ctr = 0,randI,randJ,k,tmas[10]={2,2,2,2,4,2,2,2,2,2};
 char direction;
 
@@ -160,6 +165,9 @@ void process_input(){
 		case KEY_UP:
 			direction='U';
 			break;
+		case 'Q': case 'q': case 27: //кнопки q(uit) и ESC для выхода
+			direction = 'E';
+			break;
 	}
 }
 
@@ -203,7 +211,8 @@ bool check_motion(){
 	return false;
 }
 
-void move(){
+//move(y,x) это макрос ncurses. Надо бы переименовать:
+void game_move(){
 	if(check_motion()){
 		k = 0;
 		for (int i = 0; i < 4; ++i) {
@@ -254,25 +263,29 @@ void move(){
 	}
 }
 
-void update_status(){
+//из игры нет выхода. Исправим:
+bool update_status(){
 	switch(direction){
 		case 'L':
-			move();
+			game_move();
 			direction='q';
 			break;
 		case 'R':
-			move();
+			game_move();
 			direction='q';
 			break;
 		case 'D':
-			move();
+			game_move();
 			direction='q';
 			break;
 		case 'U':
-			move();
+			game_move();
 			direction='q';
 			break;
+		case 'E':
+			return false;
 	}
+	return true;
 }
 
 int main(){
